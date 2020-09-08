@@ -1,0 +1,29 @@
+version: "2"
+
+services:
+
+  db:
+    image: mysql:5.7
+    volumes:
+      - ./dump.sql:/docker-entrypoint-initdb.d/dump.sql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=spin_rolls
+    ports:
+        - "33306:3306"
+
+  web:
+    image: ambientum/php:7.1-caddy
+    volumes:
+      - .:/var/www/app
+    environment:
+      - DB_DRIVER=mysql
+      - DB_HOST=db
+      - DB_DATABASE=spin_rolls
+      - DB_USERNAME=root
+      - DB_PASSWORD=root
+
+    ports:
+      - "8596:8080"
+    links:
+      - db
